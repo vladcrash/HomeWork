@@ -2,5 +2,7 @@
 <resources>
     <declare-styleable name="Plot">
         <attr name="lineColor" format="color" />
+        <attr name="labelY" format="reference|string" />
+        <attr name="labelX" format="reference|string" />
     </declare-styleable>
 </resources>

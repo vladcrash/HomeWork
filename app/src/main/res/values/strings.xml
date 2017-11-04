@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Homework</string>
+    <string name="label_x">X</string>
+    <string name="label_y">Y</string>
 </resources>

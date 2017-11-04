@@ -33,8 +33,10 @@ public class Plot extends View {
     private int mLineColor;
     private int mHeight;
     private int mWidth;
-    float oneStepXAdjusted;
-    float oneStepYAdjusted;
+    private float oneStepXAdjusted;
+    private float oneStepYAdjusted;
+    private String mLabelY;
+    private String mLabelX;
 
     public Plot(Context context) {
         this(context, null);
@@ -44,6 +46,8 @@ public class Plot extends View {
         super(context, attrs);
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Plot, 0 , 0);
         mLineColor = a.getColor(R.styleable.Plot_lineColor, 0xff000000);
+        mLabelY = a.getString(R.styleable.Plot_labelY);
+        mLabelX = a.getString(R.styleable.Plot_labelX);
         init();
     }
 
@@ -105,10 +109,10 @@ public class Plot extends View {
         mPlotPaint.setStrokeWidth(3);
         mPlotPaint.setTextSize(30);
         mPlotPaint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("Y", mBounds.right + getPaddingTop() / 4, (mHeight - getPaddingTop()) / 2 + getPaddingTop(), mPlotPaint);
+        canvas.drawText(mLabelY, mBounds.right + getPaddingTop() / 4, (mHeight - getPaddingTop()) / 2 + getPaddingTop(), mPlotPaint);
 
         mPlotPaint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("X", (mWidth - getPaddingLeft()) / 2 + getPaddingLeft(), mBounds.top - getPaddingTop() / 4, mPlotPaint);
+        canvas.drawText(mLabelX, (mWidth - getPaddingLeft()) / 2 + getPaddingLeft(), mBounds.top - getPaddingTop() / 4, mPlotPaint);
 
         float Y = 0;
         float X = 0;
