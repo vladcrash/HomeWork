@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         firstPart();
         secondPart();
         thirdPart();
+        fourthPart();
     }
 
     private void firstPart() {
@@ -54,5 +56,17 @@ public class MainActivity extends AppCompatActivity {
         Response2 response = gson.fromJson(json, Response2.class);
 
         Log.i(TAG, response.getMoneyAmount().toString());
+    }
+
+    private void fourthPart() {
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(DateExample.class, new MyCustomSerializer())
+                .create();
+
+        DateExample date = new DateExample(new Date());
+        String json = gson.toJson(date);
+
+        Log.i(TAG, json);
     }
 }
