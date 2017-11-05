@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
         firstPart();
         secondPart();
+        thirdPart();
     }
 
     private void firstPart() {
@@ -41,5 +43,16 @@ public class MainActivity extends AppCompatActivity {
         Response response = gson.fromJson(json, Response.class);
 
         Log.i(TAG, response.toString());
+    }
+
+    private void thirdPart() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(BigDecimal.class, new MyCustomDeserializer2())
+                .create();
+
+        String json = "{'money_amount':'2448,88'}";
+        Response2 response = gson.fromJson(json, Response2.class);
+
+        Log.i(TAG, response.getMoneyAmount().toString());
     }
 }
