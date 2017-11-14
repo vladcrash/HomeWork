@@ -1,5 +1,7 @@
 package ru.tinkoff.school.homework;
 
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +17,6 @@ import android.widget.TextView;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
 
     private EditText mAdd;
     private RecyclerView mNodeRecyclerView;
@@ -74,6 +75,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private int getColor(Node node) {
+        List<Node> parents = mNodeNodeJoinDao.getParents(node.getId());
+        List<Node> children = mNodeNodeJoinDao.getChildren(node.getId());
+
+        if (!parents.isEmpty() && !children.isEmpty()) {
+            return ContextCompat.getColor(MainActivity.this, R.color.red);
+        } else if (!parents.isEmpty()) {
+            return ContextCompat.getColor(MainActivity.this, R.color.blue);
+        } else if (!children.isEmpty()) {
+            return ContextCompat.getColor(MainActivity.this, R.color.yellow);
+        } else {
+            return ContextCompat.getColor(MainActivity.this, R.color.colorDefault);
+        }
+    }
+
     private class NodeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener{
 
@@ -90,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
         public void bind(Node node) {
             mNode = node;
             mNodeValue.setText(String.valueOf(node.getValue()));
-            Log.i(TAG, "bind " + node.getValue());
+            mNodeValue.setBackgroundColor(getColor(node));
+
         }
 
         @Override
@@ -120,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         if(!nodeNodeUp.isEmpty()) {
             for (NodeNodeJoin nodeNodeJoin : nodeNodeUp) {
                 mNodeNodeJoinDao.delete(nodeNodeJoin);
-                removeThemAll(mNodeDao.getItem(nodeNodeJoin.parentId));
             }
         }
         mNodeDao.delete(node);
