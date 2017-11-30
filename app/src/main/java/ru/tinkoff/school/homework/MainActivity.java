@@ -26,7 +26,6 @@ import ru.tinkoff.school.homework.databinding.ListItemTitleBinding;
 public class MainActivity extends AppCompatActivity {
 
     private TitleAdapter mAdapter;
-    private SortedList<Payload> mSortedList;
     private ActivityMainBinding mBinding;
     private TinkoffApi mTinkoffApi;
 
@@ -41,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
                 loadData();
             }
         });
+        mAdapter = new TitleAdapter();
+        mBinding.newsRecyclerView.setAdapter(mAdapter);
 
         initData();
         loadData();
@@ -53,28 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         mTinkoffApi = retrofit.create(TinkoffApi.class);
-
-        mAdapter = new TitleAdapter();
-        mSortedList = new SortedList<>(Payload.class, new SortedListAdapterCallback<Payload>(mAdapter) {
-            @Override
-            public int compare(Payload o1, Payload o2) {
-                int result = (int) (o1.getPublicationDate().getMilliseconds() - o2.getPublicationDate().getMilliseconds());
-                if (result != 0) {
-                    return (-1) * result / Math.abs(result);
-                }
-                return 0;
-            }
-
-            @Override
-            public boolean areContentsTheSame(Payload oldItem, Payload newItem) {
-                return oldItem.getName().equals(newItem.getName());
-            }
-
-            @Override
-            public boolean areItemsTheSame(Payload item1, Payload item2) {
-                return item1.getId().equals(item2.getId());
-            }
-        });
     }
 
     public void loadData() {
@@ -82,12 +61,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful()) {
-                    List<Payload> tempList = response.body().getPayload();
-                    mSortedList.clear();
-                    mSortedList.addAll(tempList);
-                    mBinding.newsRecyclerView.setAdapter(mAdapter);
-                    mAdapter.setPayloads(mSortedList);
-                    mAdapter.notifyDataSetChanged();
+                    mAdapter.setPayloads(response.body().getPayload());
                     mBinding.swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -118,6 +92,29 @@ public class MainActivity extends AppCompatActivity {
 
         private SortedList<Payload> mPayloads;
 
+        public TitleAdapter() {
+            mPayloads = new SortedList<>(Payload.class, new SortedListAdapterCallback<Payload>(this) {
+                @Override
+                public int compare(Payload o1, Payload o2) {
+                    int result = (int) (o1.getPublicationDate().getMilliseconds() - o2.getPublicationDate().getMilliseconds());
+                    if (result != 0) {
+                        return (-1) * result / Math.abs(result);
+                    }
+                    return 0;
+                }
+
+                @Override
+                public boolean areContentsTheSame(Payload oldItem, Payload newItem) {
+                    return oldItem.getName().equals(newItem.getName());
+                }
+
+                @Override
+                public boolean areItemsTheSame(Payload item1, Payload item2) {
+                    return item1.getId().equals(item2.getId());
+                }
+            });;
+        }
+
         @Override
         public TitleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -137,8 +134,9 @@ public class MainActivity extends AppCompatActivity {
             return mPayloads.size();
         }
 
-        public void setPayloads(SortedList<Payload> payloads) {
-            mPayloads = payloads;
+        public void setPayloads(List<Payload> payloads) {
+            mPayloads.clear();
+            mPayloads.addAll(payloads);
         }
     }
 }
