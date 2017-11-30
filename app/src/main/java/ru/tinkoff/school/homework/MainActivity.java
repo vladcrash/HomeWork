@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void setPayloads(List<Payload> payloads) {
-            mPayloads.clear();
             mPayloads.addAll(payloads);
         }
     }
